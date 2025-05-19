@@ -334,7 +334,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Your OpenAI API key
-openai.api_key = "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"
+openai.api_key = "ADD YOUR SECRET KEY HERE"
 
 
 def chatbot_response(request):
