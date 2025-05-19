@@ -8,6 +8,8 @@ from django.conf import settings
 from django.http import JsonResponse
 import requests
 import json
+import openai
+import os
 # Create your views here.
 
 
@@ -40,9 +42,10 @@ def generate_ballot(display_controls=False):
                 input_box = '<input value="'+str(candidate.id)+'" type="radio" class="flat-red ' + \
                     position_name+'" name="'+position_name+'">'
             image = "/media/" + str(candidate.photo)
-            candidates_data = candidates_data + '<li>' + input_box + '<button type="button" class="btn btn-primary btn-sm btn-flat clist platform" data-fullname="'+candidate.fullname+'" data-bio="'+candidate.bio+'"><i class="fa fa-search"></i> Platform</button><img src="' + \
+            candidates_data = candidates_data + '<li>' + input_box + '<button type="button" class="btn btn-primary btn-sm btn-flat clist platform" data-fullname=" '+candidate.fullname+'" data-bio="'+candidate.bio+'"><i class="fa fa-search"></i> AI ASSIST</button><img src="' + \
                 image+'" height="100px" width="100px" class="clist"><span class="cname clist">' + \
-                candidate.fullname+'</span></li>'
+                candidate.fullname+'<a href="https://www.google.com/search?q='+candidate.fullname+'+political+party&sca_esv=c137534a6bb4ed6f&hl=en&sxsrf=ADLYWILKuiG9BowS_0pWRheIPNC3f9ZSXQ%3A1737350423227&source=hp&ei=F92NZ9SVDPGYseMP7tH9mAI&iflsig=AL9hbdgAAAAAZ43rJwPgIQ5C60Lo-EKz6rxkAuiOQksh&oq='+candidate.fullname+'+political+&gs_lp=Egdnd3Mtd2l6IhhuYXJlbmRyYSBtb2RpIHBvbGl0aWNhbCAqAggAMhAQABiABBiRAhiKBRhGGPsBMgUQABiABDIKEAAYgAQYFBiHAjIFEAAYgAQyBRAAGIAEMgUQABiABDIFEAAYgAQyBRAAGIAEMgUQABiABDILEAAYgAQYkQIYigVIjeNtUKWYbViS1G1wAngAkAEBmAHNBqABhWWqAQwyLTMuNS40LjExLjO4AQHIAQD4AQGYAhugAv1gqAIKwgIKEC4Y5QQYJxjqAsICBxAjGCcY6gLCAg0QLhjRAxjHARgnGOoCwgIKECMYgAQYJxiKBcICChAAGIAEGEMYigXCAgQQIxgnwgINEC4YgAQYsQMYQxiKBcICFhAuGIAEGLEDGEMYgwEYxwEYigUYrwHCAg0QABiABBixAxhDGIoFwgITEC4YgAQYsQMYQxiDARjUAhiKBcICDhAuGIAEGLEDGIMBGIoFwgIKEC4YgAQYQxiKBcICDRAAGIAEGLEDGIMBGArCAhAQLhiABBhDGMcBGIoFGK8BwgIFEC4YgATCAg0QABiABBixAxgUGIcCwgIOEC4YgAQYkQIYsQMYigXCAg4QABiABBiRAhixAxiKBcICDxAjGIAEGCcYigUYRhj7AcICCBAAGIAEGLEDwgIOEAAYgAQYsQMYgwEYigXCAgYQABgWGB7CAgsQABiABBiGAxiKBcICEBAAGIAEGLEDGIMBGBQYhwKYAwziAwUSATEgQPEFaRFVhxPrVJPxBTnEpj0yk_bDkgcOMi4wLjMuNC4xMy40LjGgB4OdAg&sclient=gws-wiz">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspCANDIDATE PARTY</a> </span></li>'
+            
         up = ''
         if position.priority == 1:
             up = 'disabled'
@@ -190,6 +193,7 @@ def send_sms(phone_number, msg):
     import os
     import json
     response = ""
+    openai.api_key = os.getenv("OPENAI_API_KEY")
     email = os.environ.get('SMS_EMAIL')
     password = os.environ.get('SMS_PASSWORD')
     if email is None or password is None:
@@ -316,6 +320,51 @@ def preview_vote(request):
         'list': output
     }
     return JsonResponse(context, safe=False)
+
+
+# Add your OpenAI API key here
+
+
+
+from django.http import JsonResponse
+import openai
+import logging
+
+# Set up logging for debugging
+logger = logging.getLogger(__name__)
+
+# Your OpenAI API key
+openai.api_key = "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"
+
+
+def chatbot_response(request):
+    if request.method == "POST":
+        user_message = request.POST.get("message", "").strip()
+        if not user_message:
+            return JsonResponse({"reply": "Please enter a message."})
+
+        try:
+            # OpenAI API Call
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful AI assistant for an online voting system."},
+                    {"role": "user", "content": user_message},
+                ],
+            )
+            bot_reply = response["choices"][0]["message"]["content"]
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(f"Error in OpenAI API call: {str(e)}")
+            bot_reply = "Sorry, I couldn't process your request at the moment."
+
+        return JsonResponse({"reply": bot_reply})
+
+    return JsonResponse({"error": "Invalid request method"})
+
+
+
+
 
 
 def submit_ballot(request):

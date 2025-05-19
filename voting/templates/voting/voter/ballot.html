@@ -42,12 +42,17 @@ aria-hidden="true">&times;</button>
       });
 
       $(document).on('click', '.platform', function(e) {
+    e.preventDefault();
+    window.open('https://claude.ai/new', '_blank');
+});
+
+$(document).on('click', '.info', function(e) {
           e.preventDefault();
-          $('#bio').modal('show');
-          var platform = $(this).data('bio');
+          $('#bio').modal('show')
+          var info = $(this).data('bio');
           var fullname = $(this).data('fullname');
           $('.candidate').html(fullname);
-          $('#plat_view').html(platform);
+          $('#plat_view').html(info);
       });
 
       $('#preview').click(function(e) {

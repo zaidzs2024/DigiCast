@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <style>
+        #chatbox {
+            width: 300px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #chatlogs {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 5px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+        #userInput {
+            width: calc(100% - 60px);
+            padding: 5px;
+        }
+        #sendBtn {
+            width: 50px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatbox">
+        <div id="chatlogs"></div>
+        <input type="text" id="userInput" placeholder="Ask me anything...">
+        <button id="sendBtn">Send</button>
+    </div>
+    <script>
+        const chatlogs = document.getElementById("chatlogs");
+        const userInput = document.getElementById("userInput");
+        const sendBtn = document.getElementById("sendBtn");
+
+        sendBtn.addEventListener("click", async () => {
+    const message = userInput.value;
+    if (message.trim()) {
+        chatlogs.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
+        userInput.value = "";
+        try {
+            const response = await fetch("/chatbot/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": "{{ csrf_token }}", // Ensure your Django template provides this
+                },
+                body: new URLSearchParams({ message }),
+            });
+
+            const data = await response.json();
+            if (data.reply) {
+                chatlogs.innerHTML += `<p><strong>Bot:</strong> ${data.reply}</p>`;
+            } else if (data.error) {
+                chatlogs.innerHTML += `<p><strong>Bot:</strong> ${data.error}</p>`;
+            }
+        } catch (error) {
+            chatlogs.innerHTML += `<p><strong>Bot:</strong> Sorry, something went wrong. Please try again.</p>`;
+        }
+        chatlogs.scrollTop = chatlogs.scrollHeight;
+    }
+});
+
+
+
+
+
+
+
+
+
+        
+        
+        
+    </script>
+</body>
+</html>

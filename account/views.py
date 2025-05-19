@@ -6,6 +6,8 @@ from voting.forms import VoterForm
 from django.contrib.auth import login, logout
 # Create your views here.
 
+def chatbot_page(request):
+    return render(request, "chatbot.html")   
 
 def account_login(request):
     if request.user.is_authenticated:
@@ -63,3 +65,5 @@ def account_logout(request):
             request, "You need to be logged in to perform this action")
 
     return redirect(reverse("account_login"))
+
+ 
