@@ -193,7 +193,6 @@ def send_sms(phone_number, msg):
     import os
     import json
     response = ""
-    openai.api_key = os.getenv("OPENAI_API_KEY")
     email = os.environ.get('SMS_EMAIL')
     password = os.environ.get('SMS_PASSWORD')
     if email is None or password is None:
@@ -333,8 +332,6 @@ import logging
 # Set up logging for debugging
 logger = logging.getLogger(__name__)
 
-# Your OpenAI API key
-openai.api_key = "ADD YOUR SECRET KEY HERE"
 
 
 def chatbot_response(request):
