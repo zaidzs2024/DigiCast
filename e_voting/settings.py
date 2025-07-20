@@ -150,3 +150,4 @@ ELECTION_TITLE_PATH = os.path.join(
     BASE_DIR, 'election_title.txt')  # Election Title File
 
 SEND_OTP = False  # If you toggle this to False, Kindly use 0000 as your OTP
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
