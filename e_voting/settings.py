@@ -9,9 +9,23 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+##
+import os 
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+from decouple import config
+
+SECRET_KEY = config('SECRET_KEY')
+
+
+
+ALLOWED_HOSTS = ['digicast.onrender.com', 'localhost', '127.0.0.1']
+
 
 from pathlib import Path
-import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +34,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '%6lp_p!%r$7t-2ql5hc5(r@)8u_fc+6@ugxcnz=h=b(fn#3$p9'
+###SECRET_KEY = '%6lp_p!%r$7t-2ql5hc5(r@)8u_fc+6@ugxcnz=h=b(fn#3$p9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+#ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-ALLOWED_HOSTS = []
+
+
+
+
+#ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -81,12 +100,12 @@ WSGI_APPLICATION = 'e_voting.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
+##DATABASES = {
     #   You can use this :
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    ##'default': {
+       ## 'ENGINE': 'django.db.backends.sqlite3',
+        ##'NAME': BASE_DIR / 'db.sqlite3',
+    ##}
 
     # 'default': {
     #     'ENGINE': 'django.db.backends.mysql',
@@ -95,7 +114,42 @@ DATABASES = {
     #     'USER': 'root',
     #     'PASSWORD': ''
     # }
+#}
+#MY SQL USE THIS:
+
+import pymysql
+pymysql.install_as_MySQLdb()
+
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='127.0.0.1'),
+        'PORT': config('DB_PORT', default='3306'),
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # Password validation
